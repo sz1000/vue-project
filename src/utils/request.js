@@ -15,13 +15,18 @@ import {
 let baseUrl = ''
 if (process.env.NODE_ENV == 'development') {
   baseUrl = process.env.BASE_API
+  // console.log('development  ' + baseUrl)
 } else {
-  baseUrl += `${window.location.protocol}//${window.location.hostname}`
-}
 
+  baseUrl += `${window.location.protocol}//${window.location.host}`
+  // baseUrl += `${window.location.protocol}//${window.location.hostname}:${window.location.port}`
+  // console.log("000000000000000000  " + baseUrl)
+}
+// console.log("production " + `${window.location.protocol}//${window.location.hostname}`)
+// console.log("production  " + `${window.location.protocol}//${window.location.host}`)
 const service = axios.create({
   // baseURL: process.env.BASE_API, // api 的 base_url
-  baseURL: baseUrl, // api 的 base_url
+  baseURL: baseUrl, // api 的 base_url baseUrl,
   timeout: 5000 // 请求超时时间
 })
 
@@ -43,59 +48,59 @@ service.interceptors.request.use(
   }
 )
 
-// response 拦截器
-service.interceptors.response.use(
-  response => {
-    /**
-     * code为非20000是抛错 可结合自己业务进行修改
-     */
-    const res = response.data
-    if (response.headers.authorization) {
-      res.token = response.headers.authorization
-    }
-    if (res.code !== 0) {
-      Message({
-        message: res.message,
-        type: 'error',
-        duration: 5 * 1000
-      })
-    } else {
-      return response.data
-    }
-  },
-  error => {
-    if (error.response.status === 404) {
-      // 404 没有查找对数据
-      return {
-        data: null
-      }
-    } else if (error.response.status === 400) {
-      // 400 参数提交错误
-      return Promise.reject(error)
-    } else if (error.response.status === 401) {
-      // 401:Token 过期了;
-      MessageBox.confirm(
-        '你已被登出，可以取消继续留在该页面，或者重新登录',
-        '确定登出', {
-          confirmButtonText: '重新登录',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }
-      ).then(() => {
-        store.dispatch('FedLogOut').then(() => {
-          location.reload() // 为了重新实例化vue-router对象 避免bug
-        })
-      })
-      return Promise.reject(error)
-    } else {
-      Message({
-        message: error.message,
-        type: 'error',
-        duration: 5 * 1000
-      })
-      return Promise.reject(error)
-    }
-  }
-)
+// // response 拦截器
+// service.interceptors.response.use(
+//   response => {
+//     /**
+//      * code为非20000是抛错 可结合自己业务进行修改
+//      */
+//     const res = response.data
+//     if (response.headers.authorization) {
+//       res.token = response.headers.authorization
+//     }
+//     if (res.code !== 0) {
+//       Message({
+//         message: res.message,
+//         type: 'error',
+//         duration: 5 * 1000
+//       })
+//     } else {
+//       return response.data
+//     }
+//   },
+//   error => {
+//     if (error.response.status === 404) {
+//       // 404 没有查找对数据
+//       return {
+//         data: null
+//       }
+//     } else if (error.response.status === 400) {
+//       // 400 参数提交错误
+//       return Promise.reject(error)
+//     } else if (error.response.status === 401) {
+//       // 401:Token 过期了;
+//       MessageBox.confirm(
+//         '你已被登出，可以取消继续留在该页面，或者重新登录',
+//         '确定登出', {
+//           confirmButtonText: '重新登录',
+//           cancelButtonText: '取消',
+//           type: 'warning'
+//         }
+//       ).then(() => {
+//         store.dispatch('FedLogOut').then(() => {
+//           location.reload() // 为了重新实例化vue-router对象 避免bug
+//         })
+//       })
+//       return Promise.reject(error)
+//     } else {
+//       Message({
+//         message: error.message,
+//         type: 'error',
+//         duration: 5 * 1000
+//       })
+//       return Promise.reject(error)
+//     }
+//   }
+// )
 
 export default service

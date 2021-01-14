@@ -1,8 +1,10 @@
-import { param2Obj } from './utils'
+import {
+  param2Obj
+} from './utils'
 
 const tokens = {
-  admin: {
-    token: 'admin-token'
+  sa: {
+    token: 'sa-token'
   },
   editor: {
     token: 'editor-token'
@@ -11,7 +13,7 @@ const tokens = {
 
 const users = {
   'admin-token': {
-    roles: ['admin'],
+    roles: ['sa'],
     introduction: 'I am a super administrator',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
     name: 'Super Admin'
@@ -26,7 +28,9 @@ const users = {
 
 export default {
   login: res => {
-    const { username } = JSON.parse(res.body)
+    const {
+      username
+    } = JSON.parse(res.body)
     const data = tokens[username]
 
     if (data) {
@@ -41,7 +45,9 @@ export default {
     }
   },
   getInfo: res => {
-    const { token } = param2Obj(res.url)
+    const {
+      token
+    } = param2Obj(res.url)
     const info = users[token]
 
     if (info) {

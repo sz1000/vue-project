@@ -26,6 +26,7 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
+
           <el-col :span="8" style="text-align: right">
             <el-button type="primary" @click="searchAction(form)"
               >查询</el-button
@@ -61,6 +62,9 @@
         :title="mode == 'add' ? '新增信息' : '编辑信息'"
         :visible.sync="dialogFormVisible"
       >
+        <div style="color: red; margin-bottom: 20px">
+          假冒网站域名,假冒网站Url,假冒网站IP,被仿冒网站域名与假冒APP下载地址和被仿冒APP不能同时添加
+        </div>
         <el-form
           :model="addForm"
           status-icon
@@ -70,41 +74,67 @@
         >
           <el-row>
             <el-col :span="12">
-              <el-form-item prop="attackType" label="攻击类型">
-                <el-select v-model="addForm.attackType" placeholder="攻击类型">
-                  <el-option label="DDOS攻击" :value="'P01-01'" />
-                </el-select>
-                <!-- <el-input v-model="addForm.attackType"></el-input> -->
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item prop="sourceIp" label="攻击源地址">
-                <el-input v-model="addForm.sourceIp"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item prop="targetSystem" label="攻击目标系统">
-                <el-input v-model="addForm.targetSystem"></el-input>
+              <el-form-item prop="fakeDomainName" label="假冒网站域名">
+                <el-input
+                  ref="input"
+                  @blur="blur"
+                  :disabled="topParams"
+                  v-model="addForm.fakeDomainName"
+                ></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item prop="attackTypeSub" label="攻击类型细分子类">
-                <el-input v-model="addForm.attackTypeSub"></el-input>
+              <el-form-item prop="fakeUrl" label="假冒网站Url">
+                <el-input
+                  ref="input"
+                  @blur="blur"
+                  :disabled="topParams"
+                  v-model="addForm.fakeUrl"
+                ></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item prop="attackFlow" label="攻击流量">
-                <el-input v-model="addForm.attackFlow"></el-input>
+              <el-form-item prop="fakeIp" label="假冒网站IP">
+                <el-input
+                  ref="input"
+                  @blur="blur"
+                  :disabled="topParams"
+                  v-model="addForm.fakeIp"
+                ></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item prop="destinationIp" label="攻击目的地址">
-                <el-input v-model="addForm.destinationIp"></el-input>
+              <el-form-item prop="befakedDomainName" label="被仿冒网站域名">
+                <el-input
+                  ref="input"
+                  @blur="blur"
+                  :disabled="topParams"
+                  v-model="addForm.befakedDomainName"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item prop="fakeAppDownload" label="假冒APP下载地址">
+                <el-input
+                  ref="input2"
+                  @blur="blur"
+                  :disabled="buttomParams"
+                  v-model="addForm.fakeAppDownload"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item prop="befakedApp" label="被仿冒APP">
+                <el-input
+                  ref="input2"
+                  @blur="blur"
+                  :disabled="buttomParams"
+                  v-model="addForm.befakedApp"
+                ></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -134,6 +164,7 @@
           </el-row>
         </el-form>
       </el-dialog>
+
       <el-table
         ref="multipleTable"
         :data="tableData"
@@ -169,34 +200,37 @@
             {{ scope.row.time ? operatingTime(scope.row.time) : "" }}
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           align="center"
-          prop="destinationIp"
-          label="攻击目的地址"
+          prop="institutionCode"
+          label="机构代码"
         />
         <el-table-column
           align="center"
-          prop="targetSystem"
-          label="攻击目标系统"
-        />
-        <el-table-column align="center" prop="attackType" label="攻击类型">
-          <template slot-scope="scope">
-            {{ attackType(scope.row.attackType) }}
-          </template>
-        </el-table-column>
+          prop="institutionShort"
+          label="机构名称"
+        /> -->
         <el-table-column
           align="center"
-          prop="attackTypeSub"
-          label="攻击类型细分子类"
+          prop="fakeDomainName"
+          label="假冒网站域名"
+        />
+        <el-table-column align="center" prop="fakeUrl" label="假冒网站URL" />
+
+        <el-table-column align="center" prop="fakeIp" label="假冒网站IP" />
+        <el-table-column
+          align="center"
+          prop="befakedDomainName"
+          label="被仿冒网站域名"
         />
 
         <el-table-column
           align="center"
-          sortable
-          prop="attackFlow"
-          label="攻击流量"
+          prop="fakeAppDownload"
+          label="假冒APP下载地址"
         />
-        <el-table-column align="center" prop="sourceIp" label="攻击源地址" />
+        <el-table-column align="center" prop="befakedApp" label="被仿冒APP" />
+
         <el-table-column
           align="center"
           prop="sendStatus"
@@ -261,50 +295,48 @@
 
         <el-row>
           <el-col :span="12">
-            <el-form-item prop="sourceIp" label="攻击源地址">
-              <el-input v-model="detailForm.sourceIp" readonly></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
             <el-form-item prop="time" label="时间">
               <el-input v-model="detailForm.time" readonly></el-input>
             </el-form-item>
           </el-col>
-        </el-row>
-
-        <el-row>
           <el-col :span="12">
-            <el-form-item prop="destinationIp" label="攻击目的地址">
-              <el-input v-model="detailForm.destinationIp" readonly></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item prop="targetSystem" label="攻击目标系统">
-              <el-input v-model="detailForm.targetSystem" readonly></el-input>
+            <el-form-item prop="fakeIp" label="假冒网站IP">
+              <el-input v-model="detailForm.fakeIp" readonly></el-input>
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-row>
           <el-col :span="12">
-            <el-form-item prop="attackFlow" label="攻击流量">
-              <el-input v-model="detailForm.attackFlow" readonly></el-input>
+            <el-form-item prop="fakeDomainName" label="假冒网站域名">
+              <el-input v-model="detailForm.fakeDomainName" readonly></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item prop="attackType" label="攻击类型">
-              <el-input v-model="detailForm.attackType" readonly></el-input>
+            <el-form-item prop="fakeUrl" label="假冒网站Url">
+              <el-input v-model="detailForm.fakeUrl" readonly></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="12">
+            <el-form-item prop="fakeAppDownload" label="假冒APP下载地址">
+              <el-input
+                v-model="detailForm.fakeAppDownload"
+                readonly
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item prop="befakedApp" label="被仿冒APP">
+              <el-input v-model="detailForm.befakedApp" readonly></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item prop="attackTypeSub" label="攻击类型细分子类">
-              <el-input v-model="detailForm.attackTypeSub" readonly></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item prop="id" label="id">
+            <el-form-item prop="id " label="id">
               <el-input v-model="detailForm.id" readonly></el-input>
             </el-form-item>
           </el-col>
@@ -314,7 +346,14 @@
   </div>
 </template>
 <script>
-import { ddosQuery, ddosAdd, ddosDel, ddosEdit, ddosSend } from "@/api/product";
+import {
+  list,
+  phishingQuery,
+  phishingAdd,
+  phishingDel,
+  phishingEdit,
+  phishingSend,
+} from "@/api/product";
 import moment from "moment";
 export default {
   data() {
@@ -329,56 +368,43 @@ export default {
     };
     return {
       mode: "",
+      topParams: false,
+      buttomParams: false,
       form: {},
       id: "",
       list: [],
-      data: [
-        { "P01-01": "DDOS攻击" },
-        { "P01-02": "远程代码执行" },
-        { "P01-03": "SQL注入" },
-      ],
       checkedData: [],
       tableData: [],
       pageNumber: 0, //第一页
       pageSize: 20, //默认显示20条
+      // sendStatus: 1,
       total: 0,
       params: {},
       dialogFormVisible: false,
       dialogDetailVisible: false,
       detailForm: {},
       addForm: {
-        attackFlow: "",
-        targetSystem: "",
-        destinationIp: "",
-        attackType: "",
-        attackTypeSub: "",
-        sourceIp: "",
-        time: "",
+        fakeDomainName: "",
+        befakedDomainName: "",
+        fakeUrl: "",
+        fakeIp: "",
+        befakedApp: "",
+        fakeAppDownload: "",
       },
       rules: {
-        destinationIp: [
-          { required: true, message: "攻击目的地址不能为空", trigger: "blur" },
-        ],
-        targetSystem: [
-          { required: true, message: "攻击目标系统不能为空", trigger: "blur" },
-        ],
-        attackType: [
-          { required: true, message: "攻击类型不能为空", trigger: "blur" },
-          // { validator: validcodeip, trigger: "blur" },
-        ],
-        attackTypeSub: [
-          {
-            required: true,
-            message: "攻击类型细分子类不能为空",
-            trigger: "blur",
-          },
-        ],
-        attackFlow: [
-          { required: true, message: "攻击流量不能为空", trigger: "blur" },
-        ],
-        sourceIp: [
-          { required: true, message: "攻击源地址不能为空", trigger: "blur" },
-        ],
+        // fakeDomainName: [
+        //   { required: true, message: "设备感染IP不能为空", trigger: "blur" },
+        //   { validator: validcodeip, trigger: "blur" },
+        // ],
+        // institutionShort: [
+        //   { required: true, message: "机构简称不能为空", trigger: "blur" },
+        // ],
+        // institutionCode: [
+        //   { required: true, message: "防病毒产品不能为空", trigger: "blur" },
+        // ],
+        // befakedApp: [
+        //   { required: true, message: "机构所属地区不能为空", trigger: "blur" },
+        // ],
         time: [{ required: true, message: "时间不能为空", trigger: "blur" }],
       },
     };
@@ -386,85 +412,9 @@ export default {
   mounted() {
     this.initData();
   },
+  watch: {},
   computed: {},
   methods: {
-    attackType(type) {
-      let _type;
-      switch (type) {
-        case "P01-01":
-          _type = "DDOS攻击";
-          break;
-        case "P01-02":
-          _type = "远程代码执行";
-          break;
-        case "P01-03":
-          _type = "SQL注入";
-          break;
-        case "P01-04":
-          _type = "命令注入";
-          break;
-        case "P01-05":
-          _type = "目录遍历";
-          break;
-        case "P01-06":
-          _type = "文件上传";
-        case "P01-07":
-          _type = "扫描探测";
-          break;
-        case "P01-08":
-          _type = "STRUTS漏洞利用";
-          break;
-        case "P01-09":
-          _type = "XSS跨站脚步攻击";
-          break;
-        case "P01-10":
-          _type = "WebShell攻击";
-          break;
-        case "P01-11":
-          _type = "爬虫";
-          break;
-        case "P01-12":
-          _type = "恶意软件";
-          break;
-        case "P01-13":
-          _type = "CSRF跨站请求伪造";
-          break;
-        case "P01-14":
-          _type = "病毒/后门攻击";
-          break;
-        case "P01-15":
-          _type = "暴力破解攻击";
-          break;
-        case "P01-16":
-          _type = "信息泄露";
-          break;
-        case "P01-17":
-          _type = "非法访问下载";
-        case "P01-18":
-          _type = "缓冲区溢出攻击";
-          break;
-        case "P01-19":
-          _type = "XXE注入漏洞";
-          break;
-        case "P01-20":
-          _type = "CMS漏洞利用";
-          break;
-        case "P01-21":
-          _type = "IIS漏洞利用";
-          break;
-        case "P01-22":
-          _type = "反序列化漏洞利用";
-          break;
-        case "P01-23":
-          _type = "其他漏洞利用";
-          break;
-        case "P01-99":
-          _type = "其他";
-          break;
-        default:
-      }
-      return _type;
-    },
     sendStatusType(value) {
       let status;
       switch (value) {
@@ -509,16 +459,17 @@ export default {
     },
     details(row) {
       this.detailForm = {
-        sendStatus: this.send_status(row.sendStatus),
-        attackFlow: row.attackFlow,
         createTime: row.createTime,
-        targetSystem: row.targetSystem,
-        destinationIp: row.destinationIp,
-        attackType: this.attackType(row.attackType),
-        attackTypeSub: row.attackTypeSub,
+        fakeUrl: row.fakeUrl,
+        institutionBranch: row.institutionBranch,
         id: row.id,
+        sendStatus: this.send_status(row.sendStatus),
         time: row.time,
-        sourceIp: row.sourceIp,
+        version: row.version,
+        fakeAppDownload: row.fakeAppDownload,
+        befakedApp: row.befakedApp,
+        fakeDomainName: row.fakeDomainName,
+        fakeIp: row.fakeIp,
       };
       this.dialogDetailVisible = true;
     },
@@ -548,7 +499,7 @@ export default {
       // const params = Object.assign({}, { id: 3656 });
       let form = new FormData();
       form.append("id", id);
-      const { data: data } = await ddosSend(form);
+      const { data: data } = await phishingSend(form);
     },
     toggleSelection(rows) {
       if (rows) {
@@ -577,7 +528,7 @@ export default {
         type: "warning",
       })
         .then(() => {
-          ddosDel(this.checkedData).then((res) => {
+          phishingDel(this.checkedData).then((res) => {
             this.initData();
             this.$message({
               message: "删除成功！",
@@ -596,33 +547,87 @@ export default {
       this.addForm = {};
       this.mode = mode;
       this.dialogFormVisible = true;
+      this.topParams = false;
+      this.buttomParams = false;
     },
     edit(row) {
       this.mode = "edit";
       this.dialogFormVisible = true;
+      this.buttomParams = false;
+      this.topParams = false;
+      if (row.fakeAppDownload != "" || row.befakedApp != "") {
+        this.buttomParams = false;
+        this.topParams = true;
+      } else {
+        this.buttomParams = true;
+        this.topParams = false;
+      }
+      if (
+        row.fakeDomainName != null ||
+        row.befakedDomainName != null ||
+        row.fakeUrl != null ||
+        row.fakeIp != null
+      ) {
+        this.buttomParams = true;
+        this.topParams = false;
+      } else {
+        this.buttomParams = false;
+        this.topParams = true;
+      }
       this.$nextTick(() => {
         this.$refs.addForm.resetFields();
         this.addForm = {
-          attackFlow: row.attackFlow,
-          attackType: this.attackType(row.attackType),
-          attackTypeSub: row.attackTypeSub,
+          fakeAppDownload:
+            row.fakeAppDownload == null ? "" : row.fakeAppDownload,
           createTime: row.createTime,
-          destinationIp: row.destinationIp,
+          fakeUrl: row.fakeUrl == null ? "" : row.fakeUrl,
+          fakeIp: row.fakeIp == null ? "" : row.fakeIp,
+          fakeDomainName: row.fakeDomainName == null ? "" : row.fakeDomainName,
+          befakedDomainName:
+            row.befakedDomainName == null ? "" : row.befakedDomainName,
+          befakedApp: row.befakedApp == null ? "" : row.befakedApp,
           id: row.id,
-          sourceIp: row.sourceIp,
+          time: row.time,
           sendStatus: row.sendStatus,
-          time: row.time,
-          targetSystem: row.targetSystem,
-          time: row.time,
-          version: row.version,
         };
       });
     },
+    blur() {
+      if (
+        this.addForm.fakeDomainName ||
+        this.addForm.fakeUrl ||
+        this.addForm.befakedDomainName ||
+        this.addForm.fakeIp
+      ) {
+        this.buttomParams = true;
+        this.topParams = false;
+        return;
+      } else {
+        this.topParams = false;
+        this.buttomParams = false;
+      }
+      if (this.addForm.fakeAppDownload || this.addForm.befakedApp) {
+        this.topParams = true;
+        this.buttomParams = false;
+        return;
+      } else {
+        this.topParams = false;
+        this.buttomParams = false;
+      }
+    },
     submitForm(formName) {
+      if (JSON.stringify(this.addForm) == "{}") {
+        this.$message.error("信息不能为空！");
+        return;
+      }
+      if (Object.keys(this.addForm).length < 2) {
+        this.$message.error("请填写相关信息！");
+        return;
+      }
       if (this.mode == "add") {
         this.$refs.addForm.validate((valid) => {
           if (valid) {
-            ddosAdd(this.addForm).then((res) => {
+            phishingAdd(this.addForm).then((res) => {
               this.initData();
               this.$nextTick(() => {
                 this.$refs.addForm.resetFields();
@@ -640,16 +645,36 @@ export default {
           }
         });
       } else {
+        if (
+          this.addForm.befakedDomainName == "" &&
+          this.addForm.fakeDomainName == "" &&
+          this.addForm.fakeUrl == "" &&
+          this.addForm.fakeIp == "" &&
+          this.addForm.befakedApp == "" &&
+          this.addForm.fakeAppDownload == ""
+        ) {
+          this.$message.error("请完善信息！");
+          return;
+        }
+
         this.$refs.addForm.validate((valid) => {
           if (valid) {
-            ddosEdit(this.addForm).then((res) => {
-              this.initData();
-              this.dialogFormVisible = false;
-              this.$message({
-                message: "修改成功！",
-                type: "success",
+            phishingEdit(this.addForm)
+              .then((res) => {
+                console.log(res);
+                this.initData();
+                this.dialogFormVisible = false;
+                this.$message({
+                  message: "修改成功！",
+                  type: "success",
+                });
+              })
+              .catch((err) => {
+                console.log(err);
+                this.$message.error("修改失败");
+                this.dialogFormVisible = false;
+                return false;
               });
-            });
           } else {
             this.$message.error("请完善信息！");
             return false;
@@ -672,7 +697,7 @@ export default {
         { page: this.pageNumber, size: this.pageSize },
         this.form
       );
-      const { data: data } = await ddosQuery(params);
+      const { data: data } = await phishingQuery(params);
       this.tableData = data.content;
       if (data.content.length < 1) {
         this.pageNumber = parseInt(data.totalPages - 1);

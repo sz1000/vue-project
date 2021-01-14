@@ -1,6 +1,8 @@
 import Vue from 'vue'
+import moment from 'moment'
+Vue.prototype.$moment = moment
 import echarts from 'echarts'
-Vue.prototype.$echarts=echarts
+Vue.prototype.$echarts = echarts
 
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
@@ -13,6 +15,8 @@ import store from './store'
 import router from './router'
 import Blob from './excel/Blob'
 import Export2Excel from './excel/Export2Excel'
+import JSEncrypt from 'jsencrypt'; //引入模块
+Vue.prototype.$jsEncrypt = JSEncrypt; //配置全局变量
 
 import '@/icons' // icon
 import '@/styles/index.scss' // global css
@@ -34,7 +38,9 @@ Object.keys(filters).forEach(key => {
  */
 // import '../mock' // simulation data
 
-Vue.use(ElementUI, { locale }, Blob, Export2Excel)
+Vue.use(ElementUI, {
+  locale
+}, Blob, Export2Excel)
 
 Vue.config.productionTip = false
 

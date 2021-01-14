@@ -1,5 +1,11 @@
-import { login } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import {
+  login
+} from '@/api/login'
+import {
+  getToken,
+  setToken,
+  removeToken
+} from '@/utils/auth'
 
 const user = {
   state: {
@@ -11,6 +17,7 @@ const user = {
 
   mutations: {
     SET_TOKEN: (state, token) => {
+      console.log("token1111" + token)
       state.token = token
     },
     SET_NAME: (state, name) => {
@@ -26,28 +33,37 @@ const user = {
 
   actions: {
     // 登录
-    Login({ commit }, userInfo) {
+    Login({
+      commit
+    }, userInfo) {
       const username = userInfo.username.trim()
-      return new Promise(async(resolve, reject) => {
-        const loginData = await login(username, userInfo.password).catch(error => {
+      console.log("1111111111111  " + username + userInfo.password)
+      return new Promise(async (resolve, reject) => {
+        const {
+          data: data
+        } = await login(username, userInfo.password).catch(error => {
           reject(error)
         })
-        // const data = loginData.data
-        // console.log('TCL: Login -> data', loginData)
-        if (loginData.token) {
-          setToken(loginData.token)
-          commit('SET_TOKEN', loginData.token)
+        console.log('TCL: Login -> data', data)
+        if (data.token) {
+          setToken(data.token)
+          commit('SET_TOKEN', data.token)
         }
         resolve()
       })
     },
 
     // 获取用户信息
-    GetInfo({ commit, state }) {
+    GetInfo({
+      commit,
+      state
+    }) {
       return new Promise((resolve, reject) => {
-        const data = { avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-          name: 'admin',
-          roles: ['admin'] }
+        const data = {
+          avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+          name: 'sa',
+          roles: ['sa']
+        }
 
         if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
           commit('SET_ROLES', data.roles)
@@ -75,7 +91,10 @@ const user = {
     },
 
     // 登出
-    LogOut({ commit, state }) {
+    LogOut({
+      commit,
+      state
+    }) {
       return new Promise((resolve, reject) => {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
@@ -93,7 +112,9 @@ const user = {
     },
 
     // 前端 登出
-    FedLogOut({ commit }) {
+    FedLogOut({
+      commit
+    }) {
       return new Promise(resolve => {
         commit('SET_TOKEN', '')
         removeToken()

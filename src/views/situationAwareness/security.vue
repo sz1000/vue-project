@@ -26,6 +26,7 @@
               </el-date-picker>
             </el-form-item>
           </el-col>
+
           <el-col :span="8" style="text-align: right">
             <el-button type="primary" @click="searchAction(form)"
               >查询</el-button
@@ -53,6 +54,8 @@
             <div style="margin-bottom: 20px">
               <el-button type="primary" @click="add('add')">新增</el-button>
               <el-button type="danger" @click="del"> 删除 </el-button>
+
+              <!-- <el-button type="danger" @click="sendData(1)"> 发送 </el-button> -->
             </div>
           </el-col>
         </el-row>
@@ -69,47 +72,7 @@
           label-width="140px"
         >
           <el-row>
-            <el-col :span="12">
-              <el-form-item prop="attackType" label="攻击类型">
-                <el-select v-model="addForm.attackType" placeholder="攻击类型">
-                  <el-option label="DDOS攻击" :value="'P01-01'" />
-                </el-select>
-                <!-- <el-input v-model="addForm.attackType"></el-input> -->
-              </el-form-item>
-            </el-col>
-
-            <el-col :span="12">
-              <el-form-item prop="sourceIp" label="攻击源地址">
-                <el-input v-model="addForm.sourceIp"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item prop="targetSystem" label="攻击目标系统">
-                <el-input v-model="addForm.targetSystem"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item prop="attackTypeSub" label="攻击类型细分子类">
-                <el-input v-model="addForm.attackTypeSub"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item prop="attackFlow" label="攻击流量">
-                <el-input v-model="addForm.attackFlow"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item prop="destinationIp" label="攻击目的地址">
-                <el-input v-model="addForm.destinationIp"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
+            <el-col :span="18">
               <el-form-item prop="time" label="时间">
                 <el-date-picker
                   v-model="addForm.time"
@@ -123,6 +86,25 @@
             </el-col>
           </el-row>
           <el-row>
+            <el-col :span="12">
+              <el-form-item prop="deviceTotal" label="防病毒设备总数">
+                <el-input v-model="addForm.deviceTotal"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <!-- <el-row>
+            <el-col :span="12">
+              <el-form-item prop="institutionShort" label="机构简称">
+                <el-input v-model="addForm.institutionShort"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item prop="institutionCode" label="机构代码">
+                <el-input v-model="addForm.institutionCode"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row> -->
+          <el-row>
             <el-col :span="24">
               <el-form-item>
                 <el-button type="primary" @click="submitForm('addForm')"
@@ -134,6 +116,7 @@
           </el-row>
         </el-form>
       </el-dialog>
+
       <el-table
         ref="multipleTable"
         :data="tableData"
@@ -164,45 +147,33 @@
             }}
           </template>
         </el-table-column>
+        <!-- <el-table-column align="center" prop="sendStatus" label="发送状态">
+          <template slot-scope="scope">
+            {{ scope.row.sendStatus == "1" ? "未发送" : "发送成功" }}
+          </template>
+        </el-table-column> -->
         <el-table-column sortable align="center" prop="time" label="时间">
           <template slot-scope="scope">
             {{ scope.row.time ? operatingTime(scope.row.time) : "" }}
           </template>
         </el-table-column>
-        <el-table-column
-          align="center"
-          prop="destinationIp"
-          label="攻击目的地址"
-        />
-        <el-table-column
-          align="center"
-          prop="targetSystem"
-          label="攻击目标系统"
-        />
-        <el-table-column align="center" prop="attackType" label="攻击类型">
-          <template slot-scope="scope">
-            {{ attackType(scope.row.attackType) }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          prop="attackTypeSub"
-          label="攻击类型细分子类"
-        />
 
-        <el-table-column
+        <!-- <el-table-column
           align="center"
-          sortable
-          prop="attackFlow"
-          label="攻击流量"
+          prop="institutionCode"
+          label="机构代码"
         />
-        <el-table-column align="center" prop="sourceIp" label="攻击源地址" />
         <el-table-column
           align="center"
-          prop="sendStatus"
-          width="120"
-          label="发送状态"
-        >
+          prop="institutionShort"
+          label="机构简称"
+        /> -->
+        <el-table-column
+          align="center"
+          prop="deviceTotal"
+          label="防病毒的设备总数"
+        />
+        <el-table-column align="center" prop="sendStatus" label="发送状态">
           <template slot-scope="scope">
             <el-button
               size="mini"
@@ -213,13 +184,12 @@
             >
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="id" label="操作" width="120">
+        <el-table-column align="center" prop="id" label="操作">
           <template slot-scope="scope">
             <el-button type="text" @click="edit(scope.row)"> 编辑 </el-button>
             <el-button type="text" @click="details(scope.row)">
               详情
             </el-button>
-            <!-- <el-button type="text" @click="del(scope.row.id)"> 删除 </el-button> -->
           </template>
         </el-table-column>
       </el-table>
@@ -243,7 +213,7 @@
       <el-form
         :model="detailForm"
         status-icon
-        ref="detailForm"
+        ref="addForm"
         label-width="140px"
       >
         <el-row>
@@ -259,52 +229,39 @@
           </el-col>
         </el-row>
 
-        <el-row>
+        <!-- <el-row>
           <el-col :span="12">
-            <el-form-item prop="sourceIp" label="攻击源地址">
-              <el-input v-model="detailForm.sourceIp" readonly></el-input>
+            <el-form-item prop="institutionShort" label="机构简称">
+              <el-input
+                v-model="detailForm.institutionShort"
+                readonly
+              ></el-input>
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item prop="institutionCode" label="机构代码">
+              <el-input
+                v-model="detailForm.institutionCode"
+                readonly
+              ></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row> -->
+        <el-row>
           <el-col :span="12">
             <el-form-item prop="time" label="时间">
               <el-input v-model="detailForm.time" readonly></el-input>
             </el-form-item>
           </el-col>
-        </el-row>
-
-        <el-row>
           <el-col :span="12">
-            <el-form-item prop="destinationIp" label="攻击目的地址">
-              <el-input v-model="detailForm.destinationIp" readonly></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item prop="targetSystem" label="攻击目标系统">
-              <el-input v-model="detailForm.targetSystem" readonly></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <el-row>
-          <el-col :span="12">
-            <el-form-item prop="attackFlow" label="攻击流量">
-              <el-input v-model="detailForm.attackFlow" readonly></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item prop="attackType" label="攻击类型">
-              <el-input v-model="detailForm.attackType" readonly></el-input>
+            <el-form-item prop="deviceTotal" label="防病毒的设备总数">
+              <el-input v-model="detailForm.deviceTotal" readonly></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item prop="attackTypeSub" label="攻击类型细分子类">
-              <el-input v-model="detailForm.attackTypeSub" readonly></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item prop="id" label="id">
+            <el-form-item prop="id " label="id">
               <el-input v-model="detailForm.id" readonly></el-input>
             </el-form-item>
           </el-col>
@@ -314,7 +271,13 @@
   </div>
 </template>
 <script>
-import { ddosQuery, ddosAdd, ddosDel, ddosEdit, ddosSend } from "@/api/product";
+import {
+  virusDeviceQuery,
+  virusDeviceDel,
+  virusDeviceAdd,
+  virusDeviceEdit,
+  virusDeviceSend,
+} from "@/api/product";
 import moment from "moment";
 export default {
   data() {
@@ -329,58 +292,25 @@ export default {
     };
     return {
       mode: "",
+      checkedData: [],
+      rules: {
+        time: [{ required: true, message: "时间不能为空", trigger: "blur" }],
+        deviceTotal: [
+          { required: true, message: "设备总数不能为空", trigger: "blur" },
+        ],
+      },
       form: {},
       id: "",
       list: [],
-      data: [
-        { "P01-01": "DDOS攻击" },
-        { "P01-02": "远程代码执行" },
-        { "P01-03": "SQL注入" },
-      ],
-      checkedData: [],
       tableData: [],
       pageNumber: 0, //第一页
-      pageSize: 20, //默认显示20条
+      pageSize: 20, //默认显示10条
       total: 0,
       params: {},
       dialogFormVisible: false,
       dialogDetailVisible: false,
       detailForm: {},
-      addForm: {
-        attackFlow: "",
-        targetSystem: "",
-        destinationIp: "",
-        attackType: "",
-        attackTypeSub: "",
-        sourceIp: "",
-        time: "",
-      },
-      rules: {
-        destinationIp: [
-          { required: true, message: "攻击目的地址不能为空", trigger: "blur" },
-        ],
-        targetSystem: [
-          { required: true, message: "攻击目标系统不能为空", trigger: "blur" },
-        ],
-        attackType: [
-          { required: true, message: "攻击类型不能为空", trigger: "blur" },
-          // { validator: validcodeip, trigger: "blur" },
-        ],
-        attackTypeSub: [
-          {
-            required: true,
-            message: "攻击类型细分子类不能为空",
-            trigger: "blur",
-          },
-        ],
-        attackFlow: [
-          { required: true, message: "攻击流量不能为空", trigger: "blur" },
-        ],
-        sourceIp: [
-          { required: true, message: "攻击源地址不能为空", trigger: "blur" },
-        ],
-        time: [{ required: true, message: "时间不能为空", trigger: "blur" }],
-      },
+      addForm: {},
     };
   },
   mounted() {
@@ -388,83 +318,6 @@ export default {
   },
   computed: {},
   methods: {
-    attackType(type) {
-      let _type;
-      switch (type) {
-        case "P01-01":
-          _type = "DDOS攻击";
-          break;
-        case "P01-02":
-          _type = "远程代码执行";
-          break;
-        case "P01-03":
-          _type = "SQL注入";
-          break;
-        case "P01-04":
-          _type = "命令注入";
-          break;
-        case "P01-05":
-          _type = "目录遍历";
-          break;
-        case "P01-06":
-          _type = "文件上传";
-        case "P01-07":
-          _type = "扫描探测";
-          break;
-        case "P01-08":
-          _type = "STRUTS漏洞利用";
-          break;
-        case "P01-09":
-          _type = "XSS跨站脚步攻击";
-          break;
-        case "P01-10":
-          _type = "WebShell攻击";
-          break;
-        case "P01-11":
-          _type = "爬虫";
-          break;
-        case "P01-12":
-          _type = "恶意软件";
-          break;
-        case "P01-13":
-          _type = "CSRF跨站请求伪造";
-          break;
-        case "P01-14":
-          _type = "病毒/后门攻击";
-          break;
-        case "P01-15":
-          _type = "暴力破解攻击";
-          break;
-        case "P01-16":
-          _type = "信息泄露";
-          break;
-        case "P01-17":
-          _type = "非法访问下载";
-        case "P01-18":
-          _type = "缓冲区溢出攻击";
-          break;
-        case "P01-19":
-          _type = "XXE注入漏洞";
-          break;
-        case "P01-20":
-          _type = "CMS漏洞利用";
-          break;
-        case "P01-21":
-          _type = "IIS漏洞利用";
-          break;
-        case "P01-22":
-          _type = "反序列化漏洞利用";
-          break;
-        case "P01-23":
-          _type = "其他漏洞利用";
-          break;
-        case "P01-99":
-          _type = "其他";
-          break;
-        default:
-      }
-      return _type;
-    },
     sendStatusType(value) {
       let status;
       switch (value) {
@@ -492,33 +345,17 @@ export default {
       }
       return _status;
     },
-    device_type(type) {
-      let _type = "";
-      if (type == 1) {
-        _type = "终端";
-      } else if (type == 2) {
-        _type = "服务器";
-      } else {
-        _type = "其他";
-      }
-      return _type;
-    },
     // $moment
     operatingTime(date) {
       return this.$moment(date).format("YYYY-MM-DD HH:mm:ss");
     },
     details(row) {
       this.detailForm = {
-        sendStatus: this.send_status(row.sendStatus),
-        attackFlow: row.attackFlow,
-        createTime: row.createTime,
-        targetSystem: row.targetSystem,
-        destinationIp: row.destinationIp,
-        attackType: this.attackType(row.attackType),
-        attackTypeSub: row.attackTypeSub,
+        createTime: row.createTime ? this.operatingTime(row.createTime) : "-",
+        deviceTotal: row.deviceTotal,
         id: row.id,
-        time: row.time,
-        sourceIp: row.sourceIp,
+        sendStatus: this.send_status(row.sendStatus),
+        time: row.time ? this.operatingTime(row.time) : "-",
       };
       this.dialogDetailVisible = true;
     },
@@ -530,8 +367,7 @@ export default {
       })
         .then(() => {
           this.bank(id);
-          var that = this;
-          that.initData();
+          this.initData();
           this.$message({
             type: "success",
             message: "发送成功!",
@@ -548,16 +384,61 @@ export default {
       // const params = Object.assign({}, { id: 3656 });
       let form = new FormData();
       form.append("id", id);
-      const { data: data } = await ddosSend(form);
+      const { data: data } = await virusDeviceSend(form);
     },
-    toggleSelection(rows) {
-      if (rows) {
-        rows.forEach((row) => {
-          this.$refs.multipleTable.toggleRowSelection(row);
-        });
+    reset(formName) {
+      this.$refs[formName].resetFields();
+    },
+    resetForm(formName) {
+      this.dialogFormVisible = false;
+      // this.$nextTick(() => {
+      //   this.$refs[formName].resetFields();
+      // });
+    },
+    async initData() {
+      const params = Object.assign(
+        {},
+        { page: this.pageNumber, size: this.pageSize },
+        this.form
+      );
+      const { data: data } = await virusDeviceQuery(params);
+      this.tableData = data.content;
+      if (data.totalPages) {
+        this.total = data.totalPages;
       } else {
-        this.$refs.multipleTable.clearSelection();
+        this.total = 0;
       }
+    },
+    currentChange(e) {
+      this.pageNumber = parseInt(e - 1);
+      this.initData();
+    },
+    searchAction() {
+      // const params = Object.assign({}, { page: this.pageNumber }, this.params);
+      if (this.form.createTime) {
+        this.params.createTime = this.form.createTime;
+      } else {
+        this.$delete(this.form, "createTime");
+      }
+      if (this.form.sendStatus) {
+        this.params.sendStatus = this.form.sendStatus;
+      } else {
+        this.$delete(this.form, "sendStatus");
+      }
+      if (this.form.time) {
+        this.params.time = this.form.time;
+      } else {
+        this.$delete(this.form, "time");
+      }
+      this.pageNumber = 0;
+      this.initData();
+    },
+    Info(msg) {
+      this.$message({
+        showClose: true,
+        message: msg,
+        type: "warning",
+      });
     },
     handleSelectionChange(val) {
       this.checkedData = [];
@@ -577,7 +458,7 @@ export default {
         type: "warning",
       })
         .then(() => {
-          ddosDel(this.checkedData).then((res) => {
+          virusDeviceDel(this.checkedData).then((res) => {
             this.initData();
             this.$message({
               message: "删除成功！",
@@ -603,18 +484,9 @@ export default {
       this.$nextTick(() => {
         this.$refs.addForm.resetFields();
         this.addForm = {
-          attackFlow: row.attackFlow,
-          attackType: this.attackType(row.attackType),
-          attackTypeSub: row.attackTypeSub,
-          createTime: row.createTime,
-          destinationIp: row.destinationIp,
+          time: row.time,
+          deviceTotal: row.deviceTotal,
           id: row.id,
-          sourceIp: row.sourceIp,
-          sendStatus: row.sendStatus,
-          time: row.time,
-          targetSystem: row.targetSystem,
-          time: row.time,
-          version: row.version,
         };
       });
     },
@@ -622,7 +494,7 @@ export default {
       if (this.mode == "add") {
         this.$refs.addForm.validate((valid) => {
           if (valid) {
-            ddosAdd(this.addForm).then((res) => {
+            virusDeviceAdd(this.addForm).then((res) => {
               this.initData();
               this.$nextTick(() => {
                 this.$refs.addForm.resetFields();
@@ -642,7 +514,7 @@ export default {
       } else {
         this.$refs.addForm.validate((valid) => {
           if (valid) {
-            ddosEdit(this.addForm).then((res) => {
+            virusDeviceEdit(this.addForm).then((res) => {
               this.initData();
               this.dialogFormVisible = false;
               this.$message({
@@ -656,62 +528,6 @@ export default {
           }
         });
       }
-    },
-    reset(formName) {
-      this.$refs[formName].resetFields();
-    },
-    resetForm(formName) {
-      this.dialogFormVisible = false;
-      // this.$nextTick(() => {
-      //   this.$refs[formName].resetFields();
-      // });
-    },
-    async initData() {
-      const params = Object.assign(
-        {},
-        { page: this.pageNumber, size: this.pageSize },
-        this.form
-      );
-      const { data: data } = await ddosQuery(params);
-      this.tableData = data.content;
-      if (data.content.length < 1) {
-        this.pageNumber = parseInt(data.totalPages - 1);
-      }
-      if (data.totalElements) {
-        this.total = data.totalElements;
-      } else {
-        this.total = 0;
-      }
-    },
-    currentChange(e) {
-      this.pageNumber = parseInt(e - 1);
-      this.initData();
-    },
-    searchAction() {
-      if (this.form.createTime != "" && this.form.createTime != null) {
-        this.params.createTime = this.form.createTime;
-      } else {
-        this.$delete(this.form, "createTime");
-      }
-      if (this.form.sendStatus) {
-        this.params.sendStatus = this.form.sendStatus;
-      } else {
-        this.$delete(this.form, "sendStatus");
-      }
-      if (this.form.time != "" && this.form.time != null) {
-        this.params.time = this.form.time;
-      } else {
-        this.$delete(this.form, "time");
-      }
-      this.pageNumber = 0;
-      this.initData();
-    },
-    Info(msg) {
-      this.$message({
-        showClose: true,
-        message: msg,
-        type: "warning",
-      });
     },
   },
 };

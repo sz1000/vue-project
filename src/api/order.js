@@ -1,5 +1,7 @@
 import request from '@/utils/request'
-import { objToParams } from '@/utils/common'
+import {
+  objToParams
+} from '@/utils/common'
 
 export function getIncomeRate() {
   return request({
@@ -20,7 +22,13 @@ export function getListOrders(params) {
   console.log('TCL: getOrderList -> params123123123__++', params)
   // params.type = 0
   // params.withUser = 1
-  const paramsObj = Object.assign({}, params, { type: 0 }, { withUser: 1 }, { logistic: 1 })
+  const paramsObj = Object.assign({}, params, {
+    type: 0
+  }, {
+    withUser: 1
+  }, {
+    logistic: 1
+  })
   console.log('TCL: getOrderList -> params', params)
   return request({
     url: `api/v1/order${objToParams(paramsObj)}`,
@@ -32,7 +40,11 @@ export function getListOrdersId(id, params) {
   console.log('TCL: getOrderList -> params123123123__++', params)
   // params.type = 0
   // params.withUser = 1
-  const paramsObj = Object.assign({}, params, { type: 0 }, { withUser: 1 })
+  const paramsObj = Object.assign({}, params, {
+    type: 0
+  }, {
+    withUser: 1
+  })
   console.log('TCL: getOrderList -> params', params)
   return request({
     url: `api/v1/order/${id}${objToParams(paramsObj)}`,
@@ -51,7 +63,11 @@ export function getListOrdersId(id, params) {
 export function getListOrdersLogistic(id, params) {
   // params.type = 0
   // params.withUser = 1
-  const paramsObj = Object.assign({}, params, { type: 0 }, { withUser: 1 })
+  const paramsObj = Object.assign({}, params, {
+    type: 0
+  }, {
+    withUser: 1
+  })
   console.log('TCL: getOrderList -> params', params)
   return request({
     url: `api/v1/order/logistic/${id}${objToParams(paramsObj)}`,

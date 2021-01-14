@@ -59,13 +59,13 @@ export const constantRouterMap = [{
     name: '态势感知',
     meta: {
       title: '态势感知',
-      icon: 'example'
+      icon: 'situation'
     },
     children: [{
         name: '态势感知',
         meta: {
-          title: '网络攻击上报',
-          icon: 'example'
+          title: '网络攻击',
+          icon: 'network'
         },
         path: 'networkAttack',
         component: () => import('@/views/situationAwareness/networkAttack')
@@ -73,11 +73,38 @@ export const constantRouterMap = [{
       {
         name: 'DDOSAttack',
         meta: {
-          title: 'DDOS攻击上报',
-          icon: 'example'
+          title: 'DDOS攻击',
+          icon: 'DDoS'
         },
         path: 'DDOSAttack',
         component: () => import('@/views/situationAwareness/DDOSAttack')
+      },
+      {
+        name: 'virusInfection',
+        meta: {
+          title: '病毒感染',
+          icon: 'virus-fill'
+        },
+        path: 'virusInfection',
+        component: () => import('@/views/situationAwareness/virusInfection')
+      },
+      {
+        name: 'security',
+        meta: {
+          title: '防毒安装数',
+          icon: 'security'
+        },
+        path: 'security',
+        component: () => import('@/views/situationAwareness/security')
+      },
+      {
+        name: 'phishingSite',
+        meta: {
+          title: '防钓鱼假冒',
+          icon: 'phishing'
+        },
+        path: 'phishingSite',
+        component: () => import('@/views/situationAwareness/phishingSite')
       },
     ]
   },
