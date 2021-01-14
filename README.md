@@ -55,9 +55,9 @@
         
 
 ## 开发：
-1. git clone http://180.153.104.86:10080/wangmin/easy-pay-admin.git
+1. git clone http://180.153.104.86:10080/wangmin/vue-project.git
 
-1. cd easy-pay-admin
+1. cd vue-project
  
 1. npm install
 
